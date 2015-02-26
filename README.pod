@@ -1,0 +1,66 @@
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Perlbal::Plugin::TrustedUpstreamProxies - Trusted upstream proxies from file
+
+=head1 VERSION
+
+version 0.001
+
+=head1 SYNOPSIS
+
+F<perlbal.conf>:
+
+    LOAD TrustedUpstreamProxies
+
+    TRUSTED_UPSTREAM_PROXIES_FILE = netmasks.json
+
+    CREATE POOL sites
+      POOL sites ADD 127.0.0.1:8090
+
+    CREATE SERVICE http_balancer
+      SET listen                  = 8081
+      SET role                    = reverse_proxy
+      SET pool                    = sites
+      SET persist_client          = on
+      SET persist_backend         = on
+      SET persist_client_timeout  = 3600
+      SET backend_persist_cache   = 10
+      SET connect_ahead           = 10
+      SET plugins                 = TrustedUpstreamProxies
+    ENABLE http_balancer
+
+F<netmasks.json>:
+
+    {
+        "http_balancer": [ "127.0.0.1" ]
+    }
+
+=head1 DESCRIPTION
+
+Perlbal doesn't automatically add upstream proxies for security purposes.
+
+In order to enable it, you need to turn on the C<always_trusted> flag
+(which you should B<only> turn on if you trust your proxies fully - which
+you shouldn't) or set the C<trusted_upstream_proxies>.
+
+With later versions of Perlbal, C<trusted_upstream_proxies> supports
+multiple netmasks. However, it cannot read from a file.
+
+This plugin changes that, which just might be worthless.
+
+=head1 AUTHOR
+
+Sawyer X <xsawyerx@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by Sawyer X.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
