@@ -71,7 +71,9 @@ sub register {
             $svc->{'trusted_upstream_proxies'}
                 and return 0;
 
-            $svc->{'trusted_upstream_proxies'} = $netmasks;
+            $svc->{'trusted_upstream_proxies'} = [
+                map Net::Netmask->new($_), @{$netmasks}
+            ];
 
             return 0;
         },
